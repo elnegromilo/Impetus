@@ -16,7 +16,7 @@ class FocusWorker(
     override fun doWork(): Result {
         return try {
             // 1. Obtener la frase del día desde nuestro repositorio local
-            val quote = QuoteRepository.getQuoteForToday()
+            val quote = QuoteRepository.getRandomQuote()
 
             // 2. Asegurar que el canal de notificaciones exista en el sistema
             NotificationHelper.createNotificationChannel(applicationContext)

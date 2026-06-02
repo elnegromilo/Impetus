@@ -21,12 +21,8 @@ object QuoteRepository {
     fun getRandomQuote(): String = quotes.random()
 
     /**
-     * Devuelve una frase de forma secuencial basándose en el día del año,
-     * garantizando variedad sin repetición inmediata.
+     * Ahora esta función también devuelve una frase aleatoria para garantizar
+     * variedad durante las pruebas y el uso diario.
      */
-    fun getQuoteForToday(): String {
-        val dayOfYear = java.util.Calendar.getInstance()
-            .get(java.util.Calendar.DAY_OF_YEAR)
-        return quotes[dayOfYear % quotes.size]
-    }
+    fun getQuoteForToday(): String = getRandomQuote()
 }
