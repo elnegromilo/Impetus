@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Paleta clara. La oscura está en values-night/colors.xml con los mismos nombres. -->
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="impetus_background">#FF0A0A0A</color>
+    <color name="impetus_background">#FFFAF8F4</color>
+    <color name="impetus_surface">#FFF0ECE4</color>
+    <color name="impetus_surface_strong">#FFE5DED1</color>
+    <color name="impetus_sheet">#FFFFFFFF</color>
+    <color name="impetus_on_background">#FF1C1B19</color>
+    <color name="impetus_muted">#FF5F5B54</color>
+    <color name="impetus_outline">#FFD3CDC2</color>
+    <color name="impetus_accent">#FFA35C00</color>
+    <color name="impetus_icon_background">#FF121110</color>
+    <color name="impetus_icon_bolt">#FFF2B451</color>
 </resources>

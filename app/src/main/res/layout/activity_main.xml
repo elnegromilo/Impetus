@@ -1,57 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Pantalla principal. Jerarquía de arriba a abajo:
+  1. Encabezado: fecha de hoy + acceso a ajustes.
+  2. Etiqueta de fecha especial (solo si aplica).
+  3. Selector Frase / Versículo.
+  4. Contenido del día (protagonista).
+  5. Acciones: compartir y copiar.
+  6. Estado del recordatorio (siempre visible, toca para cambiarlo).
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/impetus_background"
-    android:padding="24dp"
+    android:background="?android:attr/colorBackground"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_app_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:alpha="0.4"
-        android:letterSpacing="0.3"
-        android:text="@string/app_title"
-        android:textColor="@color/white"
-        android:textSize="13sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:id="@+id/content_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp">
 
-    <!-- El texto real lo pone MainActivity con la frase del día. -->
-    <TextView
-        android:id="@+id/tv_daily_quote"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="serif"
-        android:gravity="center"
-        android:lineSpacingMultiplier="1.4"
-        android:padding="16dp"
-        android:textColor="@color/white"
-        android:textSize="22sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="La disciplina es elegir entre lo que quieres ahora y lo que más quieres." />
+        <!-- 1. Encabezado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="72dp"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_test"
-        style="@style/Widget.Material3.Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/white"
-        android:paddingHorizontal="28dp"
-        android:paddingVertical="14dp"
-        android:text="@string/test_notification"
-        android:textColor="@color/impetus_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:letterSpacing="0.25"
+                    android:text="@string/app_brand"
+                    android:textAppearance="?attr/textAppearanceLabelSmall"
+                    android:textColor="@color/impetus_muted" />
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:accessibilityHeading="true"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="@color/impetus_on_background"
+                    tools:text="Lunes, 19 de octubre" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_settings"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/action_settings"
+                android:tooltipText="@string/action_settings"
+                app:icon="@drawable/ic_tune"
+                app:iconTint="@color/impetus_on_background" />
+        </LinearLayout>
+
+        <!-- 2. Fecha especial -->
+        <TextView
+            android:id="@+id/tv_occasion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_occasion"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="@color/impetus_on_background"
+            android:visibility="gone"
+            tools:text="🎄 ¡Feliz Navidad!"
+            tools:visibility="visible" />
+
+        <!-- 3. Selector -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/content_tabs"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_tab_quote"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/tab_quote" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_tab_verse"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/tab_verse" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <!-- 4. Contenido del día -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:paddingVertical="16dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/content_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <!-- Comilla decorativa: solo para las frases. -->
+                <TextView
+                    android:id="@+id/tv_quote_mark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="-24dp"
+                    android:fontFamily="serif"
+                    android:importantForAccessibility="no"
+                    android:text="“"
+                    android:textColor="@color/impetus_accent"
+                    android:textSize="72sp"
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityLiveRegion="polite"
+                    android:textAppearance="@style/TextAppearance.Impetus.Content"
+                    android:textIsSelectable="true"
+                    tools:text="La disciplina es elegir entre lo que quieres ahora y lo que más quieres." />
+
+                <TextView
+                    android:id="@+id/tv_reference"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="@color/impetus_muted"
+                    android:visibility="gone"
+                    tools:text="Juan 3:16 · RVR 1909"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 5. Acciones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_share"
+                style="@style/Widget.Material3.Button.TonalButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/action_share"
+                app:icon="@drawable/ic_share" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_copy"
+                style="@style/Widget.Material3.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:minHeight="48dp"
+                android:text="@string/action_copy"
+                app:icon="@drawable/ic_copy" />
+        </LinearLayout>
+
+        <!-- 6. Estado del recordatorio -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_reminder"
+            style="@style/Widget.Material3.CardView.Filled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardCornerRadius="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="56dp"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="8dp"
+                android:paddingVertical="8dp">
+
+                <ImageView
+                    android:id="@+id/iv_reminder"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_bell"
+                    app:tint="@color/impetus_accent" />
+
+                <TextView
+                    android:id="@+id/tv_reminder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/impetus_on_background"
+                    tools:text="Tu próxima frase llega mañana a las 8:00 a. m." />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_enable"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/action_enable"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

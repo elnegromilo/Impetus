@@ -1,9 +1,31 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
+    <!-- Tema de la app. Claro u oscuro según el teléfono; los colores salen de colors.xml. -->
     <style name="Base.Theme.Impetus" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:colorBackground">@color/impetus_background</item>
+        <item name="colorPrimary">@color/impetus_on_background</item>
+        <item name="colorOnPrimary">@color/impetus_background</item>
+        <item name="colorSecondary">@color/impetus_on_background</item>
+        <item name="colorSecondaryContainer">@color/impetus_surface_strong</item>
+        <item name="colorOnSecondaryContainer">@color/impetus_on_background</item>
+        <item name="colorTertiary">@color/impetus_accent</item>
+        <item name="colorSurface">@color/impetus_background</item>
+        <item name="colorOnSurface">@color/impetus_on_background</item>
+        <item name="colorOnSurfaceVariant">@color/impetus_muted</item>
+        <item name="colorSurfaceContainerLow">@color/impetus_sheet</item>
+        <item name="colorSurfaceContainer">@color/impetus_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/impetus_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/impetus_surface</item>
+        <item name="colorOutline">@color/impetus_outline</item>
+        <item name="colorOutlineVariant">@color/impetus_outline</item>
+        <item name="android:windowBackground">@color/impetus_background</item>
     </style>
 
     <style name="Theme.Impetus" parent="Base.Theme.Impetus" />
+
+    <!-- Texto principal: serif grande y con aire para leer con calma. -->
+    <style name="TextAppearance.Impetus.Content" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textColor">@color/impetus_on_background</item>
+        <item name="android:lineSpacingMultiplier">1.3</item>
+    </style>
 </resources>

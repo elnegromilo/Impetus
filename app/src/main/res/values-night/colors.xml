@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Paleta oscura (se usa cuando el teléfono está en modo oscuro). -->
+<resources>
+    <color name="impetus_background">#FF121110</color>
+    <color name="impetus_surface">#FF1F1D1A</color>
+    <color name="impetus_surface_strong">#FF302C27</color>
+    <color name="impetus_sheet">#FF1A1917</color>
+    <color name="impetus_on_background">#FFF1EEE8</color>
+    <color name="impetus_muted">#FFABA59C</color>
+    <color name="impetus_outline">#FF3A3733</color>
+    <color name="impetus_accent">#FFF2B451</color>
+</resources>

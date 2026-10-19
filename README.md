@@ -1,38 +1,41 @@
 # Impetus
 
-App Android que te envía cada mañana una frase de enfoque y disciplina como notificación, y la muestra también en la pantalla principal.
+App Android que te acompaña cada día con una **frase de enfoque** y un **versículo de la Biblia**, y te los envía como notificación a la hora que elijas.
 
-## Cómo funciona
+## Qué hace
 
-- **Frase del día:** `QuoteRepository` elige la frase según el día del año, así que es la misma durante todo el día y dos días seguidos nunca repiten.
-- **Notificación diaria:** `FocusScheduler` programa con WorkManager un trabajo periódico de 24 h que arranca en la próxima 08:00 local (cambia `NOTIFICATION_HOUR` para otra hora). WorkManager agrupa tareas, así que la hora puede variar unos minutos.
-- **Permisos:** en Android 13+ la app pide `POST_NOTIFICATIONS`. Si se rechaza, un aviso con acceso directo a los ajustes permite activarlas después.
-- **Botón de prueba:** dispara la notificación al instante para comprobar que todo funciona.
+- **Frase y versículo del día:** 371 frases y 454 versículos que rotan por fecha. La misma fecha siempre muestra lo mismo y dos días seguidos nunca se repiten.
+- **Fechas especiales:** Año Nuevo, Bajada de Reyes, San Valentín, Día de la Mujer, Semana Santa (calculada cada año), Día del Trabajo, Día de la Madre y del Padre, Fiestas Patrias, Santa Rosa de Lima, Canción Criolla, Todos los Santos, cuenta regresiva a Navidad, Nochebuena, Navidad y Fin de año. Y el 1 de junio, el cumpleaños de Impetus.
+- **Recordatorio diario:** eliges la hora y si quieres recibir la frase, el versículo o ambos.
+- **Compartir y copiar** el contenido del día.
+- **Tema claro y oscuro** según el teléfono.
 
-## Requisitos
+Los versículos son de la **Reina-Valera 1909** (dominio público), con la ortografía actualizada. Se extrajeron de [scrollmapper/bible_databases](https://github.com/scrollmapper/bible_databases).
 
-- Android Studio reciente (el proyecto usa AGP 9.2.1)
-- `minSdk` 26 (Android 8.0), `targetSdk` 36
+## Descargar la APK
 
-## Ejecutar
+Cada cambio en `master` compila la app en GitHub Actions y publica `impetus.apk` en **Releases → Impetus – última versión**.
+
+## Desarrollo
 
 ```bash
 ./gradlew installDebug      # instalar en un dispositivo o emulador
 ./gradlew test              # pruebas unitarias
 ```
 
-## Estructura
-
 | Archivo | Responsabilidad |
 | --- | --- |
-| `MainActivity.kt` | Pantalla principal, permisos y botón de prueba |
-| `FocusScheduler.kt` | Programación de la tarea diaria (hora fija) |
-| `FocusWorker.kt` | Tarea en segundo plano que muestra la notificación |
-| `NotificationHelper.kt` | Canal y construcción de la notificación |
-| `QuoteRepository.kt` | Lista de frases y selección por fecha |
+| `MainActivity.kt` | Pantalla principal |
+| `SettingsSheet.kt` | Ajustes del recordatorio (hoja inferior) |
+| `DailyContent.kt` | Elige la frase y el versículo de cada día |
+| `Occasions.kt` | Fechas especiales (fijas y móviles) |
+| `QuoteData.kt` / `VerseData.kt` | Las frases y los versículos |
+| `FocusScheduler.kt` / `FocusWorker.kt` | Programación y envío de la notificación |
+| `NotificationHelper.kt` | Canal y diseño de la notificación |
+| `ImpetusPreferences.kt` | Ajustes guardados en el teléfono |
 
-## Personalizar
+### Personalizar
 
-- **Frases:** edita la lista en `QuoteRepository.kt`.
-- **Hora de envío:** `FocusScheduler.NOTIFICATION_HOUR`.
-- **Identificador de la app:** `applicationId` en `app/build.gradle.kts` (el `namespace` de código sigue siendo `com.example.impetus`).
+- **Frases:** edita la lista de `QuoteData.kt` (cuida que no se repitan; hay un test que lo revisa).
+- **Fechas especiales:** agrega una entrada en `Occasions.kt`.
+- **Firma:** `app/debug.keystore` es una llave de depuración compartida para que la APK de GitHub y la de tu PC se actualicen entre sí. No la uses para publicar en Play Store.

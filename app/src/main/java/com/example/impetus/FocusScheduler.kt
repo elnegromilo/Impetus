@@ -5,50 +5,65 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import java.time.Duration
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 /**
- * Programa la notificación diaria a una hora fija del día.
+ * Programa la notificación diaria a la hora que eligió el usuario.
  */
 object FocusScheduler {
 
     /** Nombre único de la tarea periódica en WorkManager. */
     const val WORK_NAME = "impetus_daily_focus_work"
 
-    /** Hora local (0-23) a la que debe llegar la notificación. */
-    const val NOTIFICATION_HOUR = 8
+    /** Hora por defecto del recordatorio. */
+    const val DEFAULT_HOUR = 8
+
+    /** Sube este número si cambia la forma de programar, para reprogramar instalaciones viejas. */
+    private const val SCHEDULE_VERSION = 2
 
     /**
-     * Encola el trabajo diario con un retraso inicial hasta la próxima
-     * [NOTIFICATION_HOUR]:00 local. WorkManager agrupa tareas, así que la hora
-     * es aproximada (puede variar unos minutos).
-     *
-     * Usa UPDATE para que una instalación que ya tenía programada la tarea
-     * (sin hora fija) adopte el nuevo horario sin duplicarse.
+     * Se llama al abrir la app. Solo reprograma si la hora cambió (o es una instalación
+     * nueva o anterior a esta versión); si no, mantiene la tarea existente.
      */
-    fun schedule(context: Context) {
-        val initialDelay = delayUntilNext(ZonedDateTime.now(ZoneId.systemDefault()), NOTIFICATION_HOUR)
+    fun ensureScheduled(context: Context) {
+        val prefs = ImpetusPreferences(context)
+        val time = prefs.reminderTime
+        val signature = "v$SCHEDULE_VERSION-$time"
+        val policy = if (prefs.scheduledSignature == signature) {
+            ExistingPeriodicWorkPolicy.KEEP
+        } else {
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE
+        }
+        enqueue(context, time, policy)
+        prefs.scheduledSignature = signature
+    }
 
+    /** Guarda una nueva hora y reprograma desde cero. */
+    fun reschedule(context: Context, time: LocalTime) {
+        ImpetusPreferences(context).reminderTime = time
+        ensureScheduled(context)
+    }
+
+    private fun enqueue(context: Context, time: LocalTime, policy: ExistingPeriodicWorkPolicy) {
+        val initialDelay = delayUntilNext(ZonedDateTime.now(ZoneId.systemDefault()), time)
         val request = PeriodicWorkRequestBuilder<FocusWorker>(24, TimeUnit.HOURS)
             .setInitialDelay(initialDelay.toMillis(), TimeUnit.MILLISECONDS)
             .build()
-
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-            WORK_NAME,
-            ExistingPeriodicWorkPolicy.UPDATE,
-            request
-        )
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(WORK_NAME, policy, request)
     }
 
+    /** Próximo momento en que llegará el recordatorio. */
+    fun nextReminder(now: ZonedDateTime, time: LocalTime): ZonedDateTime = now.plus(delayUntilNext(now, time))
+
     /**
-     * Tiempo desde [now] hasta la próxima ocurrencia de [hour]:00. Si ya pasó
-     * (o es justo esa hora), cuenta hasta mañana. Respeta cambios de horario de
-     * verano porque trabaja con [ZonedDateTime].
+     * Tiempo desde [now] hasta la próxima vez que el reloj marque [time]. Si ya pasó
+     * (o es justo esa hora), cuenta hasta mañana. Respeta el horario de verano.
      */
-    internal fun delayUntilNext(now: ZonedDateTime, hour: Int): Duration {
-        var next = now.withHour(hour).withMinute(0).withSecond(0).withNano(0)
+    internal fun delayUntilNext(now: ZonedDateTime, time: LocalTime): Duration {
+        var next = now.with(time.withSecond(0).withNano(0))
         if (!next.isAfter(now)) {
             next = next.plusDays(1)
         }

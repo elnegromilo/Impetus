@@ -6,9 +6,8 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 
 /**
- * Worker responsable de mostrar la frase del día en segundo plano.
- * WorkManager lo vuelve a ejecutar aunque la app esté cerrada o el
- * dispositivo se haya reiniciado.
+ * Tarea en segundo plano que muestra el contenido del día. WorkManager la vuelve
+ * a ejecutar aunque la app esté cerrada o el teléfono se haya reiniciado.
  */
 class FocusWorker(
     context: Context,
@@ -17,13 +16,16 @@ class FocusWorker(
 
     override fun doWork(): Result {
         return try {
-            val quote = QuoteRepository.getQuoteForToday()
             NotificationHelper.createNotificationChannel(applicationContext)
-            NotificationHelper.showFocusNotification(applicationContext, quote)
+            NotificationHelper.showDailyNotification(
+                applicationContext,
+                DailyContentRepository.forToday(),
+                ImpetusPreferences(applicationContext).notificationContent
+            )
             Result.success()
         } catch (exception: Exception) {
             Log.e(TAG, "No se pudo mostrar la notificación diaria", exception)
-            // failure() no reintenta; la próxima ejecución periódica seguirá en pie.
+            // failure() no reintenta; la próxima ejecución periódica sigue en pie.
             Result.failure()
         }
     }
