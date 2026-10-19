@@ -11,18 +11,17 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.impetus"
+        applicationId = "com.elnegromilo.impetus"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,11 +35,13 @@ android {
 }
 
 dependencies {
-    // WorkManager – Kotlin + Coroutines extensions
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    // WorkManager (Kotlin + Coroutines)
+    implementation(libs.androidx.work.runtime.ktx)
 
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+
+    testImplementation(libs.junit)
 }

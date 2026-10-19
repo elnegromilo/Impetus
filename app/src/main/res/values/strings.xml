@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Impetus</string>
+    <string name="app_title">IMPETUS</string>
+    <string name="test_notification">Probar notificación</string>
+
+    <string name="notifications_enabled">Notificaciones activadas</string>
+    <string name="notifications_disabled">Las notificaciones están desactivadas. Actívalas para recibir la frase diaria.</string>
+    <string name="open_settings">Ajustes</string>
+
+    <string name="channel_name">Frase de enfoque diario</string>
+    <string name="channel_description">Recordatorios diarios de disciplina y mentalidad</string>
+    <string name="notification_title">Impetus – Frase del día</string>
 </resources>
